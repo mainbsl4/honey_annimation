@@ -45,10 +45,10 @@ export default function Navbar({ onOpenReserve }) {
           </div>
           <div>
             <span className="font-serif text-lg tracking-widest font-semibold gold-text-gradient uppercase block leading-none">
-              Aura Nectar
+              Example
             </span>
             <span className="text-[8px] uppercase tracking-widest text-amber-300/50 font-mono">
-              The Autumn Reserve
+              Pure Reserve
             </span>
           </div>
         </a>

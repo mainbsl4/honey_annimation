@@ -64,7 +64,7 @@ export default function Home() {
               Reservation Added!
             </h4>
             <p className="text-[11px] font-mono text-amber-300">
-              Batch AN-8491 ({reservedCount} {reservedCount === 1 ? "bottle" : "bottles"}) reserved for delivery.
+              Batch EX-001 ({reservedCount} {reservedCount === 1 ? "bottle" : "bottles"}) reserved for delivery.
             </p>
           </div>
         </div>

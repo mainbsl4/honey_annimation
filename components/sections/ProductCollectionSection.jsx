@@ -15,7 +15,7 @@ export const PRODUCTS = [
     subtitle: "Raw Mountain Nectar",
     price: 38.0,
     weight: "500g / 17.6 oz",
-    batch: "AN-8491",
+    batch: "EX-001",
     mgo: "550+ MGO",
     moisture: "16.1%",
     image: "/assets/honey/images/wildflower-honey.jpg",

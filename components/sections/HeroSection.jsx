@@ -35,7 +35,7 @@ export default function HeroSection({ onReserveClick }) {
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-950/40 backdrop-blur-md">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
               <span className="text-[10px] uppercase tracking-widest text-amber-300 font-mono font-medium">
-                1,200m Altitude • Single Batch AN-8491
+                1,200m Altitude • Single Batch EX-001
               </span>
             </div>
 

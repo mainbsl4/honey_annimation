@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 
 const BATCH_DATABASE = {
-  "AN-8491": {
-    batch: "AN-8491",
+  "EX-001": {
+    batch: "EX-001",
     variety: "Alpine Wildflower Reserve",
     harvestDate: "March 18, 2026",
     elevation: "1,240m (High Alpine Range)",
@@ -60,8 +60,8 @@ const BATCH_DATABASE = {
 };
 
 export default function BatchVerificationSection() {
-  const [inputBatch, setInputBatch] = useState("AN-8491");
-  const [activeCert, setActiveCert] = useState(BATCH_DATABASE["AN-8491"]);
+  const [inputBatch, setInputBatch] = useState("EX-001");
+  const [activeCert, setActiveCert] = useState(BATCH_DATABASE["EX-001"]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -70,7 +70,7 @@ export default function BatchVerificationSection() {
       setActiveCert(BATCH_DATABASE[clean]);
     } else {
       // Fallback to nearest batch
-      setActiveCert(BATCH_DATABASE["AN-8491"]);
+      setActiveCert(BATCH_DATABASE["EX-001"]);
     }
   };
 
@@ -90,7 +90,7 @@ export default function BatchVerificationSection() {
               </span>
             </h2>
             <p className="text-sm text-amber-200/70 leading-relaxed">
-              Every jar of Aura Nectar carries a laser-etched batch code on its
+              Every jar of Example Honey carries a laser-etched batch code on its
               base. Enter your batch number to access third-party mass
               spectrometry and botanical pollen chromatography.
             </p>
@@ -105,7 +105,7 @@ export default function BatchVerificationSection() {
                   type="text"
                   value={inputBatch}
                   onChange={(e) => setInputBatch(e.target.value)}
-                  placeholder="e.g. AN-8491"
+                  placeholder="e.g. EX-001"
                   className="flex-1 bg-[#140c06] border border-amber-500/30 rounded-xl px-4 py-3 text-amber-100 font-mono text-sm focus:outline-none focus:border-amber-400 transition-colors uppercase"
                 />
                 <button

@@ -16,12 +16,12 @@ export default function SingleProductReserve({ onReserveSuccess }) {
             <div className="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-black/60 border border-amber-500/20">
               <Image
                 src="/assets/honey/images/wildflower-honey.jpg"
-                alt="Aura Nectar Honey Bottle"
+                alt="Example Honey Bottle"
                 fill
                 className="object-cover"
               />
               <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-amber-500 text-black text-[10px] font-bold font-mono uppercase tracking-wider">
-                Limited Batch AN-8491
+                Limited Batch EX-001
               </div>
             </div>
 
@@ -29,10 +29,10 @@ export default function SingleProductReserve({ onReserveSuccess }) {
             <div className="md:col-span-7 space-y-6">
               <div>
                 <span className="text-[10px] uppercase tracking-widest text-amber-400 font-mono block">
-                  The Autumn 2026 Reserve
+                  The Pure Reserve
                 </span>
                 <h3 className="text-3xl font-serif text-white font-medium mt-1">
-                  Aura Nectar Flacon
+                  Example Honey Flacon
                 </h3>
                 <p className="text-xs text-amber-200/60 font-mono mt-1">
                   500g • Single-Origin 1,200m Altitude • MGO 550+

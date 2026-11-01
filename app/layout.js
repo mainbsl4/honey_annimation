@@ -1,17 +1,16 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "AURA NECTAR | Artisanal Pure Raw Honey & Living Apiary",
+  title: "Example | 3D Animated Honey Showcase",
   description:
-    "Experience raw, single-origin mountain nectar untouched by heat or industrial filtration. Real-time 3D interactive hive experience, single-batch laboratory purity certificates, and living apiary stories.",
+    "Experience raw, single-origin mountain honey untouched by heat or industrial filtration. Interactive 3D honey flacon, living apiary visuals, and natural honey harvesting.",
   keywords: [
+    "Example Honey",
     "Raw Honey",
     "Artisanal Honey",
-    "Single Origin Nectar",
+    "3D Honey Showcase",
     "Organic Bee Honey",
-    "Manuka",
     "Wildflower Honey",
-    "Living Apiary",
   ],
 };
 

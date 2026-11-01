@@ -11,15 +11,15 @@ export default function Footer() {
         </div>
 
         <p className="font-serif text-lg text-amber-100/90 max-w-md mx-auto font-light">
-          Every bottle of Aura Nectar plants 50 native blossoms for wild alpine pollinator sanctuaries.
+          Every bottle of Example Honey plants 50 native blossoms for wild alpine pollinator sanctuaries.
         </p>
 
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-6 text-[11px] font-mono text-amber-300/40">
-          <span>© 2026 Aura Nectar Artisanal Apiaries</span>
+          <span>© 2026 Example • Demo Project</span>
           <span>•</span>
           <span>Single-Origin Reserve</span>
           <span>•</span>
-          <span>Carbon-Negative Sanctuary</span>
+          <span>Artisanal Sanctuary</span>
         </div>
       </div>
     </footer>
