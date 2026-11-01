@@ -5,7 +5,6 @@ import { Float, OrbitControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import HoneyJarModel from "./HoneyJarModel";
-import HoneyDripExperience from "./HoneyDripExperience";
 import BeeModel from "./BeeModel";
 
 function pseudoRandom(seed) {
@@ -60,6 +59,42 @@ function FloatingPollenDust({ count = 35 }) {
 }
 
 export default function Hero3DScene({ scrollProgress = 0 }) {
+  const scrollGroupRef = useRef();
+  const beeOrbitRef = useRef();
+  const smoothScrollRef = useRef(0);
+
+  useFrame((state, delta) => {
+    // Smooth damp for momentum-based scroll response
+    smoothScrollRef.current = THREE.MathUtils.damp(
+      smoothScrollRef.current,
+      scrollProgress,
+      4.0,
+      delta
+    );
+    const s = smoothScrollRef.current;
+
+    // Scroll-driven 3D jar animation: rotates 360°, tilts cinematically, and glides in depth
+    if (scrollGroupRef.current) {
+      // 360-degree rotation across scroll
+      scrollGroupRef.current.rotation.y = s * Math.PI * 2.2;
+      // Gentle forward tilt as you scroll into the reserve details
+      scrollGroupRef.current.rotation.x = Math.sin(s * Math.PI) * 0.16;
+      scrollGroupRef.current.rotation.z = -Math.sin(s * Math.PI) * 0.08;
+      // Parallax depth movement
+      scrollGroupRef.current.position.y = -0.32 + Math.sin(s * Math.PI) * 0.12 - s * 0.2;
+      scrollGroupRef.current.position.z = Math.sin(s * Math.PI) * 0.28;
+    }
+
+    // Bee dynamic orbit around the jar as the user scrolls
+    if (beeOrbitRef.current) {
+      const beeAngle = s * Math.PI * 3.2 + 0.85;
+      const radius = 1.35;
+      beeOrbitRef.current.position.x = Math.cos(beeAngle) * radius;
+      beeOrbitRef.current.position.z = Math.sin(beeAngle) * radius;
+      beeOrbitRef.current.position.y = 0.45 + Math.sin(s * Math.PI * 2.5) * 0.35;
+    }
+  });
+
   return (
     <>
       {/* Lighting Setup: Warm Golden Studio */}
@@ -94,35 +129,27 @@ export default function Hero3DScene({ scrollProgress = 0 }) {
       {/* Floating Particles */}
       <FloatingPollenDust count={30} />
 
-      {/* Main Hero Jar: Fast Mode when sealed, opens on scroll */}
-      <Float
-        speed={1.2}
-        rotationIntensity={0.15}
-        floatIntensity={0.25}
-        floatingRange={[-0.04, 0.04]}
-      >
-        <HoneyJarModel
-          position={[0, -0.35, 0]}
-          scale={0.44}
-          interactive={false}
-          autoRotate={true}
-          openProgress={scrollProgress}
-        />
-      </Float>
+      {/* Scroll-Driven Animated Group */}
+      <group ref={scrollGroupRef} position={[0, -0.32, 0]}>
+        <Float
+          speed={1.2}
+          rotationIntensity={0.12}
+          floatIntensity={0.2}
+          floatingRange={[-0.03, 0.03]}
+        >
+          <HoneyJarModel
+            position={[0, 0, 0]}
+            scale={0.44}
+            interactive={false}
+            autoRotate={false}
+          />
+        </Float>
+      </group>
 
-      {/* Honey Dipper (grooved head pointing down, handle up) pouring honey when opened */}
-      <HoneyDripExperience
-        position={[0.36, 1.55, 0.1]}
-        scale={6.8}
-        openProgress={scrollProgress}
-      />
-
-      {/* Animated Bee hovering and tracking pointer */}
-      <BeeModel
-        position={[1.15, 0.55, 0.8]}
-        scale={0.001}
-        trackPointer={true}
-      />
+      {/* Bee orbiting dynamically with scroll position */}
+      <group ref={beeOrbitRef} position={[1.15, 0.55, 0.8]}>
+        <BeeModel scale={0.001} trackPointer={true} />
+      </group>
     </>
   );
 }

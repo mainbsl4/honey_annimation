@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo, useEffect } from "react";
+import React, { useRef, useMemo } from "react";
 import { useGLTF, Center } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -60,13 +60,8 @@ export default function HoneyJarModel({
   rotation = [0, 0, 0],
   autoRotate = true,
   interactive = true,
-  openProgress = 0,
 }) {
   const group = useRef();
-  const lidRef = useRef(null);
-  const currentOpenRef = useRef(0);
-  const currentSpeedRef = useRef(2.4);
-
   const { scene } = useGLTF("/assets/honey/models/jar.glb");
 
   // Clone scene and configure materials
@@ -95,7 +90,6 @@ export default function HoneyJarModel({
           });
         } else if (matName.includes("5SG")) {
           // Burlap / Cloth Lid
-          child.userData.isLid = true;
           if (child.material) {
             child.material.roughness = 0.8;
             child.material.metalness = 0.05;
@@ -107,56 +101,17 @@ export default function HoneyJarModel({
             child.material.metalness = 0.05;
           }
         }
-      } else if (child.name === "Object_4") {
-        child.userData.isLid = true;
       }
     });
 
     return cloned;
   }, [scene]);
 
-  // Safely assign lid reference in effect outside of render phase
-  useEffect(() => {
-    if (clonedScene) {
-      clonedScene.traverse((child) => {
-        if (child.userData?.isLid || child.name === "Object_4") {
-          lidRef.current = child;
-        }
-      });
-    }
-  }, [clonedScene]);
-
   useFrame((state, delta) => {
     if (!group.current) return;
 
-    // Smoothly damp towards target openProgress
-    currentOpenRef.current = THREE.MathUtils.damp(
-      currentOpenRef.current,
-      openProgress,
-      4.5,
-      delta
-    );
-    const open = currentOpenRef.current;
-
-    // Fast mode rotation when closed (~2.4 rad/s), decelerates to graceful slow pace (~0.35 rad/s) when opened
     if (autoRotate) {
-      const targetSpeed = THREE.MathUtils.lerp(2.4, 0.35, open);
-      currentSpeedRef.current = THREE.MathUtils.damp(
-        currentSpeedRef.current,
-        targetSpeed,
-        3.5,
-        delta
-      );
-      group.current.rotation.y += delta * currentSpeedRef.current;
-    }
-
-    // Scroll-driven lid opening: lifts up vertically and tilts gracefully
-    if (lidRef.current) {
-      // In jar.glb local coordinates: +Z is world +Y (up), +X is world +X
-      lidRef.current.position.z = THREE.MathUtils.lerp(0, 3.2, open);
-      lidRef.current.position.x = THREE.MathUtils.lerp(0, 0.42, open);
-      lidRef.current.rotation.x = THREE.MathUtils.lerp(0, 0.35, open);
-      lidRef.current.rotation.y = THREE.MathUtils.lerp(0, -0.25, open);
+      group.current.rotation.y += delta * 0.45;
     }
 
     if (interactive) {
@@ -172,13 +127,13 @@ export default function HoneyJarModel({
     <group ref={group} position={position} rotation={rotation} scale={scale} dispose={null}>
       <Center>
         <group>
-          {/* The Outer Glass Jar, Lid & Label (Y goes from 0.18 to 7.85) */}
+          {/* Outer Glass Jar, Sealed Burlap Lid & Vintage Label */}
           <primitive object={clonedScene} />
 
-          {/* Golden Amber Honey Liquid Volume Perfectly Contained Inside Jar Walls */}
+          {/* Golden Amber Honey Liquid Volume Contained Inside Jar Walls */}
           {/* Jar bottom is at 0.18, honey starts at 0.4. Jar top is at 7.72, honey level is at 6.0 */}
           <group position={[0, 3.2, 0]}>
-            {/* Main Viscous Honey Fluid Body (Height 5.6 -> Y bounds: -2.8 to +2.8, in jar: 0.4 to 6.0) */}
+            {/* Viscous Honey Fluid Body (Height 5.6 -> Y bounds: -2.8 to +2.8, in jar: 0.4 to 6.0) */}
             <mesh>
               <cylinderGeometry args={[2.22, 2.22, 5.6, 48]} />
               <meshPhysicalMaterial
@@ -194,7 +149,7 @@ export default function HoneyJarModel({
               />
             </mesh>
 
-            {/* Meniscus / Top Liquid Honey Surface at Y = 2.8 (world Y = 6.0) */}
+            {/* Meniscus / Top Liquid Honey Surface */}
             <mesh position={[0, 2.8, 0]} rotation={[-Math.PI / 2, 0, 0]}>
               <circleGeometry args={[2.22, 48]} />
               <meshStandardMaterial

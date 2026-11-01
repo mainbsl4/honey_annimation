@@ -6,13 +6,13 @@ import Hero3DScene from "../canvas/Hero3DScene";
 
 export default function HeroSection({ onReserveClick }) {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [isManualToggled, setIsManualToggled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      // Over the first 340px of window scroll, smoothly progress from 0.0 to 1.0
-      const progress = Math.min(Math.max(scrollY / 340, 0), 1);
+      // Over the hero scroll range, smoothly progress from 0.0 to 1.0
+      const range = Math.max(window.innerHeight * 0.85, 300);
+      const progress = Math.min(Math.max(scrollY / range, 0), 1);
       setScrollProgress(progress);
     };
 
@@ -20,10 +20,6 @@ export default function HeroSection({ onReserveClick }) {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Effective progress combines scroll-driven and manual toggle
-  const effectiveProgress = isManualToggled ? 1 : scrollProgress;
-  const isOpened = effectiveProgress > 0.35;
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden">
@@ -55,22 +51,20 @@ export default function HeroSection({ onReserveClick }) {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 pt-1">
-              <button
-                onClick={onReserveClick}
-                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-black font-semibold text-xs uppercase tracking-widest shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105 transition-all cursor-pointer font-mono"
-              >
-                Reserve Bottle — $48
-              </button>
+              <div className="flex items-center gap-4 pt-1">
+                <button
+                  onClick={onReserveClick}
+                  className="px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-black font-semibold text-xs uppercase tracking-widest shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105 transition-all cursor-pointer font-mono"
+                >
+                  Reserve Bottle — $48
+                </button>
 
-              {/* Interactive Jar Open/Pour trigger button */}
-              <button
-                onClick={() => setIsManualToggled((prev) => !prev)}
-                className="px-5 py-3 rounded-full border border-amber-500/30 bg-black/40 hover:bg-amber-950/40 text-amber-300 text-xs font-mono flex items-center gap-2 transition-all cursor-pointer hover:border-amber-400/60"
-              >
-                <span className="text-sm">{isOpened ? "↺" : "🍯"}</span>
-                <span>{isOpened ? "Seal Jar (Fast Mode)" : "Open & Pour Honey"}</span>
-              </button>
+              <a
+                  href="#nectar"
+                  className="px-6 py-3.5 rounded-full border border-amber-500/30 hover:border-amber-400/60 bg-black/40 hover:bg-amber-950/40 text-amber-300 text-xs font-mono transition-all"
+                >
+                Inspect Flacon ↓
+              </a>
             </div>
 
             {/* Quick 3 Metrics */}
@@ -104,7 +98,7 @@ export default function HeroSection({ onReserveClick }) {
             </div>
           </div>
 
-          {/* Right: Full Interactive 3D Honey Jar & Flying Bee */}
+          {/* Right: Interactive 3D Honey Jar & Flying Bee */}
           <div className="lg:col-span-7 relative w-full h-[540px] sm:h-[650px] flex items-center justify-center">
             <div className="absolute inset-0 radial-honey-glow rounded-3xl" />
 
@@ -112,31 +106,19 @@ export default function HeroSection({ onReserveClick }) {
               className="w-full h-full cursor-grab active:cursor-grabbing"
               camera={{ position: [0, 0.2, 4.4], fov: 42 }}
             >
-              <Hero3DScene scrollProgress={effectiveProgress} />
+              <Hero3DScene scrollProgress={scrollProgress} />
             </ThreeCanvasWrapper>
 
-            {/* Mode & Navigation Pill Badge */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full glass-panel border border-amber-500/30 text-[11px] font-mono flex items-center gap-2.5 pointer-events-auto shadow-2xl backdrop-blur-md">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isOpened ? "bg-amber-400 animate-ping" : "bg-amber-500 animate-pulse"
-                }`}
-              />
-              <span className="text-amber-200">
-                {isOpened ? (
-                  <>
-                    <strong className="text-amber-300">Flacon Open</strong> • Pouring Golden Nectar (Scroll up to seal)
-                  </>
-                ) : (
-                  <>
-                    <strong className="text-amber-300">Fast Mode Active</strong> • Sealed Flacon (Scroll down to unseal)
-                  </>
-                )}
-              </span>
+                {/* Floating Navigation & Scroll Interaction Badge */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full glass-panel border border-amber-500/25 text-[11px] font-mono flex items-center gap-2 pointer-events-none shadow-2xl backdrop-blur-md whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-amber-200/90">
+                    <strong className="text-amber-300">Scroll</strong> to Rotate 360° • <strong className="text-amber-300">Drag</strong> to Orbit • <strong className="text-amber-300">Wheel</strong> to Zoom
+                  </span>
+                </div>
             </div>
           </div>
         </div>
-      </div>
     </section>
   );
 }
