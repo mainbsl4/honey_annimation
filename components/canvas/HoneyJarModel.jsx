@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { useGLTF, Center } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -60,11 +60,16 @@ export default function HoneyJarModel({
   rotation = [0, 0, 0],
   autoRotate = true,
   interactive = true,
+  openProgress = 0,
 }) {
   const group = useRef();
+  const lidRef = useRef(null);
+  const currentOpenRef = useRef(0);
+  const currentSpeedRef = useRef(2.4);
+
   const { scene } = useGLTF("/assets/honey/models/jar.glb");
 
-  // Clone scene to avoid mutating shared cache
+  // Clone scene and configure materials
   const clonedScene = useMemo(() => {
     const cloned = scene.clone(true);
 
@@ -86,10 +91,11 @@ export default function HoneyJarModel({
             clearcoat: 1.0,
             clearcoatRoughness: 0.04,
             reflectivity: 0.95,
-            depthWrite: false, // Ensures honey inside renders without clipping
+            depthWrite: false, // Ensures honey inside renders cleanly
           });
         } else if (matName.includes("5SG")) {
           // Burlap / Cloth Lid
+          child.userData.isLid = true;
           if (child.material) {
             child.material.roughness = 0.8;
             child.material.metalness = 0.05;
@@ -101,17 +107,56 @@ export default function HoneyJarModel({
             child.material.metalness = 0.05;
           }
         }
+      } else if (child.name === "Object_4") {
+        child.userData.isLid = true;
       }
     });
 
     return cloned;
   }, [scene]);
 
+  // Safely assign lid reference in effect outside of render phase
+  useEffect(() => {
+    if (clonedScene) {
+      clonedScene.traverse((child) => {
+        if (child.userData?.isLid || child.name === "Object_4") {
+          lidRef.current = child;
+        }
+      });
+    }
+  }, [clonedScene]);
+
   useFrame((state, delta) => {
     if (!group.current) return;
 
+    // Smoothly damp towards target openProgress
+    currentOpenRef.current = THREE.MathUtils.damp(
+      currentOpenRef.current,
+      openProgress,
+      4.5,
+      delta
+    );
+    const open = currentOpenRef.current;
+
+    // Fast mode rotation when closed (~2.4 rad/s), decelerates to graceful slow pace (~0.35 rad/s) when opened
     if (autoRotate) {
-      group.current.rotation.y += delta * 0.35;
+      const targetSpeed = THREE.MathUtils.lerp(2.4, 0.35, open);
+      currentSpeedRef.current = THREE.MathUtils.damp(
+        currentSpeedRef.current,
+        targetSpeed,
+        3.5,
+        delta
+      );
+      group.current.rotation.y += delta * currentSpeedRef.current;
+    }
+
+    // Scroll-driven lid opening: lifts up vertically and tilts gracefully
+    if (lidRef.current) {
+      // In jar.glb local coordinates: +Z is world +Y (up), +X is world +X
+      lidRef.current.position.z = THREE.MathUtils.lerp(0, 3.2, open);
+      lidRef.current.position.x = THREE.MathUtils.lerp(0, 0.42, open);
+      lidRef.current.rotation.x = THREE.MathUtils.lerp(0, 0.35, open);
+      lidRef.current.rotation.y = THREE.MathUtils.lerp(0, -0.25, open);
     }
 
     if (interactive) {

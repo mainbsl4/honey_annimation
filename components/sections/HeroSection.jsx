@@ -1,10 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ThreeCanvasWrapper from "../canvas/ThreeCanvasWrapper";
 import Hero3DScene from "../canvas/Hero3DScene";
 
 export default function HeroSection({ onReserveClick }) {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isManualToggled, setIsManualToggled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Over the first 340px of window scroll, smoothly progress from 0.0 to 1.0
+      const progress = Math.min(Math.max(scrollY / 340, 0), 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Effective progress combines scroll-driven and manual toggle
+  const effectiveProgress = isManualToggled ? 1 : scrollProgress;
+  const isOpened = effectiveProgress > 0.35;
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden">
       {/* Background ambient lighting */}
@@ -35,12 +55,21 @@ export default function HeroSection({ onReserveClick }) {
               </p>
             </div>
 
-            <div className="flex items-center gap-4 pt-1">
+            <div className="flex flex-wrap items-center gap-4 pt-1">
               <button
                 onClick={onReserveClick}
                 className="px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-black font-semibold text-xs uppercase tracking-widest shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105 transition-all cursor-pointer font-mono"
               >
                 Reserve Bottle — $48
+              </button>
+
+              {/* Interactive Jar Open/Pour trigger button */}
+              <button
+                onClick={() => setIsManualToggled((prev) => !prev)}
+                className="px-5 py-3 rounded-full border border-amber-500/30 bg-black/40 hover:bg-amber-950/40 text-amber-300 text-xs font-mono flex items-center gap-2 transition-all cursor-pointer hover:border-amber-400/60"
+              >
+                <span className="text-sm">{isOpened ? "↺" : "🍯"}</span>
+                <span>{isOpened ? "Seal Jar (Fast Mode)" : "Open & Pour Honey"}</span>
               </button>
             </div>
 
@@ -83,13 +112,27 @@ export default function HeroSection({ onReserveClick }) {
               className="w-full h-full cursor-grab active:cursor-grabbing"
               camera={{ position: [0, 0.2, 4.4], fov: 42 }}
             >
-              <Hero3DScene />
+              <Hero3DScene scrollProgress={effectiveProgress} />
             </ThreeCanvasWrapper>
 
-            {/* Floating Navigation Hint */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full glass-panel border border-amber-500/20 text-[10px] text-amber-300/80 font-mono flex items-center gap-2 pointer-events-none shadow-lg whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-              <span>Scroll to Zoom • Left-drag to Orbit • Right-drag to Move</span>
+            {/* Mode & Navigation Pill Badge */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full glass-panel border border-amber-500/30 text-[11px] font-mono flex items-center gap-2.5 pointer-events-auto shadow-2xl backdrop-blur-md">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isOpened ? "bg-amber-400 animate-ping" : "bg-amber-500 animate-pulse"
+                }`}
+              />
+              <span className="text-amber-200">
+                {isOpened ? (
+                  <>
+                    <strong className="text-amber-300">Flacon Open</strong> • Pouring Golden Nectar (Scroll up to seal)
+                  </>
+                ) : (
+                  <>
+                    <strong className="text-amber-300">Fast Mode Active</strong> • Sealed Flacon (Scroll down to unseal)
+                  </>
+                )}
+              </span>
             </div>
           </div>
         </div>

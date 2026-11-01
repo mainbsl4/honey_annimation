@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useMemo } from "react";
-import { Float, ContactShadows, OrbitControls } from "@react-three/drei";
+import { Float, OrbitControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import HoneyJarModel from "./HoneyJarModel";
@@ -59,7 +59,7 @@ function FloatingPollenDust({ count = 35 }) {
   );
 }
 
-export default function Hero3DScene() {
+export default function Hero3DScene({ scrollProgress = 0 }) {
   return (
     <>
       {/* Lighting Setup: Warm Golden Studio */}
@@ -94,7 +94,7 @@ export default function Hero3DScene() {
       {/* Floating Particles */}
       <FloatingPollenDust count={30} />
 
-      {/* Main Hero Jar */}
+      {/* Main Hero Jar: Fast Mode when sealed, opens on scroll */}
       <Float
         speed={1.2}
         rotationIntensity={0.15}
@@ -106,27 +106,22 @@ export default function Hero3DScene() {
           scale={0.44}
           interactive={false}
           autoRotate={true}
+          openProgress={scrollProgress}
         />
       </Float>
 
-      {/* Dipper with dripping honey drops hovering gracefully above jar */}
-      <HoneyDripExperience position={[0.65, 1.75, 0.3]} scale={6.8} />
+      {/* Honey Dipper (grooved head pointing down, handle up) pouring honey when opened */}
+      <HoneyDripExperience
+        position={[0.36, 1.55, 0.1]}
+        scale={6.8}
+        openProgress={scrollProgress}
+      />
 
       {/* Animated Bee hovering and tracking pointer */}
       <BeeModel
         position={[1.15, 0.55, 0.8]}
         scale={0.001}
         trackPointer={true}
-      />
-
-      {/* Ground contact shadow */}
-      <ContactShadows
-        position={[0, -1.8, 0]}
-        opacity={0.6}
-        scale={6.5}
-        blur={2.2}
-        far={3.0}
-        color="#291503"
       />
     </>
   );
