@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/sections/HeroSection";
 import SingleProductFeature from "../components/sections/SingleProductFeature";
+import WorksWheelSection from "../components/sections/WorksWheelSection";
 import VideoCinematicBanner from "../components/sections/VideoCinematicBanner";
 import Honeycomb3DSection from "../components/sections/Honeycomb3DSection";
 import HarvestFilmReel from "../components/sections/HarvestFilmReel";
@@ -39,6 +40,9 @@ export default function Home() {
 
       {/* Single Product 3D Interactive Feature Stage */}
       <SingleProductFeature onReserveClick={scrollToReserve} />
+
+      {/* Interactive 3D Works Wheel Section */}
+      <WorksWheelSection />
 
       {/* Full-Bleed Cinematic Video Parallax Banner */}
       <VideoCinematicBanner />

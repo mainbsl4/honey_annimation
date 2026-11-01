@@ -67,6 +67,9 @@ export default function Navbar({ onOpenReserve }) {
           <a href="#films" className="hover:text-amber-400 transition-colors">
             Film Reel
           </a>
+          <a href="#wheel" className="hover:text-amber-400 transition-colors">
+            Archive Wheel
+          </a>
         </nav>
 
         {/* Right Actions */}
